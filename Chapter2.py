@@ -176,3 +176,26 @@ def Recommendation(train, user_id, W, K):
 			rank[j] += pi * wj
 
 	return rank
+
+
+# ItemCF-IUF：计算物品相似度，余弦相似度，改进版，对过于活跃用户进行了惩罚
+def ItemSimilarity(train):
+	# 统计同时对某两个用户评分的情况
+	C = dict()
+	N = dict()
+	for user, items in train.itmes():
+		for i in user:
+			N[i] += 1
+			for j in user:
+				if i == j:
+					continue
+				# 惩罚该用户自己评价的物品
+				C[i][j] += 1 / math.log(1 + len(items) * 1.0)
+
+	# 计算相似度
+	W = dict()
+	for i, related_items in C.items():
+		for j, cij in related_items.items():
+			W[i][j] = cij / math.sqrt(N[i] * N[j])
+
+	return W
