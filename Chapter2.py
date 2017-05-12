@@ -142,49 +142,37 @@ def UserSimilarity(train):
 	return W
 
 
+# ItemCF：计算物品相似度，余弦相似度
+def ItemSimilarity(train):
+	# 统计同时对某两个用户评分的情况
+	C = dict()
+	N = dict()
+	for user, items in train.itmes():
+		for i in user:
+			N[i] += 1
+			for j in user:
+				if i == j:
+					continue
+				C[i][j] += 1
+
+	# 计算相似度
+	W = dict()
+	for i, related_items in C.items():
+		for j, cij in related_items.items():
+			W[i][j] = cij / math.sqrt(N[i] * N[j])
+
+	return W
 
 
+# ItemCF：推荐算法，推荐某用户可能感兴趣的物品
+def Recommendation(train, user_id, W, K):
+	rank = dict()
+	ru = train(user_id)
+	for i, pi in ru.items():
+		for j, wj in sorted(W[i].items(), key=itemgetter(1), reverse=True)[0:K]:
+			if j in ru:
+				# 过滤本身
+				continue
+			rank[j] += pi * wj
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	return rank
