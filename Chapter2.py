@@ -180,7 +180,7 @@ def Recommendation(train, user_id, W, K):
 
 # ItemCF-IUF：计算物品相似度，余弦相似度，改进版，对过于活跃用户进行了惩罚
 def ItemSimilarity(train):
-	# 统计同时对某两个用户评分的情况
+	# 统计某个物品A评分B也评分的情况
 	C = dict()
 	N = dict()
 	for user, items in train.itmes():
@@ -199,3 +199,5 @@ def ItemSimilarity(train):
 			W[i][j] = cij / math.sqrt(N[i] * N[j])
 
 	return W
+
+
